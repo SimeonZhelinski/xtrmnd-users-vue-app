@@ -1,11 +1,13 @@
 <template>
-  <div v-if="message" :class="messageClass">
-    <p>{{ message }}</p>
-  </div>
+  <transition name="fade" @after-leave="onAfterLeave">
+    <div v-if="isVisible" :class="messageClass">
+      <p>{{ message }}</p>
+    </div>
+  </transition>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from "vue";
+import { defineComponent, PropType, ref, watch, computed } from "vue";
 
 export default defineComponent({
   name: "ErrorMessage",
@@ -21,15 +23,49 @@ export default defineComponent({
       default: "error",
     },
   },
-  computed: {
-    messageClass(): string {
-      return this.type === "error" ? "error-message" : "success-message";
-    },
+  setup(props) {
+    const isVisible = ref(false);
+
+    watch(
+      () => props.message,
+      (newMessage) => {
+        if (newMessage) {
+          isVisible.value = true;
+
+          setTimeout(() => {
+            isVisible.value = false;
+          }, 1000);
+        }
+      }
+    );
+
+    const messageClass = computed(() => {
+      return props.type === "error" ? "error-message" : "success-message";
+    });
+
+    const onAfterLeave = () => {
+      console.log("Message has faded out");
+    };
+
+    return {
+      isVisible,
+      messageClass,
+      onAfterLeave,
+    };
   },
 });
 </script>
 
 <style lang="css">
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 1s ease;
+}
+
+.fade-enter, .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
+  opacity: 0;
+}
+
 .error-message {
   color: red;
   background-color: #f8d7da;

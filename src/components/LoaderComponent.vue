@@ -13,7 +13,7 @@ export default {
 };
 </script>
 
-<style scoped lang="css">
+<style lang="css">
 .lds-ring,
 .lds-ring div {
   box-sizing: border-box;
