@@ -13,7 +13,7 @@
           <h2>Name: {{ user.name }}</h2>
           <p class="username">Username: {{ user.username }}</p>
         </div>
-        <p class="email">{{ user.email }}</p>
+        <p class="email">Email: {{ user.email }}</p>
 
         <div class="address">
           <h4>Address:</h4>
@@ -34,7 +34,7 @@
         <div class="company">
           <h4>Company:</h4>
           <p>{{ user.company.name }}</p>
-          <p>{{ user.company.catchPhrase }}</p>
+          <p>Catch Phrase: {{ user.company.catchPhrase }}</p>
         </div>
       </li>
     </ul>
@@ -42,7 +42,8 @@
 </template>
 
 <script lang="ts">
-import { ref } from "vue";
+import { ref, onMounted, nextTick } from "vue";
+import axios from "axios";
 import Loader from "./LoaderComponent.vue";
 import ErrorMessage from "./ErrorMessage.vue";
 
@@ -61,13 +62,10 @@ export default {
       isLoading.value = true;
       message.value = null;
       try {
-        const response = await fetch(
-          "https://jsonplaceholder.typicode.com/users/"
+        const response = await axios.get(
+          "https://jsonplaceholder.typicode.com/users"
         );
-        if (!response.ok) {
-          throw new Error("Failed to fetch data");
-        }
-        users.value = await response.json();
+        users.value = response.data;
         message.value = {
           text: "User data loaded successfully!",
           type: "success",
@@ -83,7 +81,6 @@ export default {
         isLoading.value = false;
       }
     };
-
     return {
       users,
       isLoading,
@@ -95,13 +92,6 @@ export default {
 </script>
 
 <style scoped>
-.user-list {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px;
-}
-
 button {
   margin-bottom: 20px;
   padding: 10px 20px;
@@ -187,11 +177,18 @@ li:hover {
   cursor: pointer;
 }
 
-@media (max-width: 600px) {
-  .user-list {
-    padding: 10px;
-  }
+.user-map {
+  margin-top: 20px;
+}
 
+.map-container {
+  height: 200px;
+  width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+@media (max-width: 600px) {
   .user-item {
     padding: 15px;
     margin: 10px 0;
