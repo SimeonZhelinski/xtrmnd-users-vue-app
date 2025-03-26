@@ -1,0 +1,10 @@
+services:
+  vue-app:
+    container_name: xtrmnd-users-vue-app
+    build:
+      dockerfile: Dockerfile
+    ports:
+      - "8080:3000"
+    environment:
+      - NODE_ENV=production
+    restart: always
